@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>For Dedepie ♥</title>
+<meta name="description" content="Someone made you something. Open it." />
+<meta name="theme-color" content="#1a0710" />
+<meta property="og:title" content="For Dedepie ♥" />
+<meta property="og:description" content="Someone made you something. Open it." />
+<meta property="og:image" content="og.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path fill='%23ff4d6d' d='M16 29S3 21 3 11.5A7.5 7.5 0 0 1 16 7a7.5 7.5 0 0 1 13 4.5C29 21 16 29 16 29z'/></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Caveat:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="preload" as="image" href="her-square.webp" />
+<style>
+  :root {
+    --wine: #1a0710;
+    --wine-2: #2b0b18;
+    --rose: #ff4d6d;
+    --rose-2: #ff8fa3;
+    --blush: #ffd6de;
+    --cream: #fff4f0;
+    --ink: #2a1018;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --serif: "Fraunces", Georgia, serif;
+    --hand: "Caveat", "Segoe Script", cursive;
+    --sans: "Inter", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--wine); scroll-behavior: smooth; overflow-x: hidden; overflow-x: clip; }
+  body {
+    background: var(--wine);
+    color: var(--cream);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    overflow-x: clip;
+  }
+  body.locked { overflow: hidden; height: 100dvh; }
+  img { display: block; max-width: 100%; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+
+  /* Hearts drifting up behind everything. */
+  #sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  /* Warm light that breathes. */
+  .glow {
+    position: fixed; inset: -20vmax; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(40vmax 34vmax at 20% 20%, rgba(255, 77, 109, 0.22), transparent 70%),
+      radial-gradient(36vmax 30vmax at 85% 70%, rgba(255, 143, 163, 0.16), transparent 70%),
+      radial-gradient(30vmax 26vmax at 50% 110%, rgba(255, 77, 109, 0.18), transparent 70%);
+    animation: breathe 9s ease-in-out infinite alternate;
+  }
+  @keyframes breathe { to { transform: scale(1.08) translate3d(2vmax, -1vmax, 0); } }
+  .grain {
+    position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: 0.07; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  main { position: relative; z-index: 1; }
+
+  /* ── The envelope ── */
+  #gate {
+    position: fixed; inset: 0; z-index: 50; display: grid; place-items: center;
+    background: radial-gradient(80vmax 60vmax at 50% 40%, var(--wine-2), var(--wine));
+    transition: opacity 1.2s var(--ease), visibility 1.2s;
+  }
+  #gate.gone { opacity: 0; visibility: hidden; }
+  .gate-inner { text-align: center; padding: 24px; }
+  .gate-to { font-family: var(--hand); font-size: clamp(30px, 7vw, 44px); color: var(--blush); opacity: 0; animation: up 1.2s var(--ease) 0.3s forwards; }
+  .envelope {
+    position: relative; width: min(300px, 74vw); aspect-ratio: 3 / 2; margin: 28px auto 0; cursor: pointer;
+    opacity: 0; animation: up 1.2s var(--ease) 0.6s forwards;
+    filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.5));
+  }
+  .envelope .back, .envelope .front, .envelope .flap { position: absolute; inset: 0; border-radius: 10px; }
+  .envelope .back { background: #f3d9dc; }
+  .envelope .letter {
+    position: absolute; left: 8%; right: 8%; top: 10%; bottom: 8%; border-radius: 6px; background: var(--cream);
+    display: grid; place-items: center; opacity: 0; transition: transform 1s var(--ease) 0.35s, opacity 0.4s ease 0.3s;
+    font-family: var(--hand); font-size: 26px; color: var(--ink);
+  }
+  .envelope .front {
+    background: linear-gradient(160deg, #ffe3e7, #f6c7ce);
+    clip-path: polygon(0 34%, 50% 70%, 100% 34%, 100% 100%, 0 100%);
+  }
+  .envelope .flap {
+    background: linear-gradient(180deg, #f8cfd5, #eeb3bd);
+    clip-path: polygon(0 0, 100% 0, 50% 62%);
+    transform-origin: top; transition: transform 0.8s var(--ease); z-index: 2;
+  }
+  .seal {
+    position: absolute; left: 50%; top: 52%; width: 58px; height: 58px; margin: -29px 0 0 -29px; z-index: 3;
+    display: grid; place-items: center; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ff7a92, #c9183b 70%);
+    box-shadow: 0 6px 18px rgba(201, 24, 59, 0.5), inset 0 -3px 6px rgba(0, 0, 0, 0.25);
+    animation: beat 1.4s ease-in-out infinite; transition: opacity 0.4s;
+  }
+  .seal svg { width: 26px; height: 26px; }
+  .envelope.open .flap { transform: rotateX(180deg); z-index: 0; }
+  .envelope.open .seal { opacity: 0; animation: none; }
+  .envelope.open .letter { transform: translateY(-46%); opacity: 1; }
+  .gate-hint { margin-top: 30px; font-size: 13px; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(255, 214, 222, 0.6); opacity: 0; animation: up 1.2s var(--ease) 1s forwards; }
+  @keyframes beat { 0%, 100% { transform: scale(1); } 14% { transform: scale(1.12); } 28% { transform: scale(1); } 42% { transform: scale(1.08); } }
+  @keyframes up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+  /* ── Sections ── */
+  section { position: relative; min-height: 100svh; display: grid; place-items: center; padding: 80px 22px; overflow-x: clip; }
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 1.2s var(--ease), transform 1.2s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+  .label { font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--rose-2); }
+  .serif { font-family: var(--serif); font-weight: 400; letter-spacing: -0.02em; }
+  .hand { font-family: var(--hand); }
+
+  /* Hero: her, inside a heart that grows as you scroll. */
+  #hero { padding-top: 40px; }
+  .hero-wrap { width: 100%; max-width: 1100px; display: grid; gap: 28px; justify-items: center; text-align: center; }
+  .heart-frame { position: relative; width: min(78vw, 470px); aspect-ratio: 1; }
+  .heart-frame svg.shape { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .heart-photo { filter: url(#rosy); }
+  .heart-ring { fill: none; stroke: var(--rose); stroke-width: 1.2; opacity: 0.7; }
+  .heart-frame .pulse { transform-origin: 50% 50%; animation: halo 2.8s var(--ease) infinite; }
+  @keyframes halo { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.18); opacity: 0; } }
+  .hero-title { font-size: clamp(54px, 12vw, 120px); line-height: 0.95; }
+  .hero-title em { font-style: italic; color: var(--rose-2); }
+  .hero-sub { font-family: var(--hand); font-size: clamp(26px, 5vw, 36px); color: var(--blush); }
+  .scroll-cue { margin-top: 10px; display: grid; justify-items: center; gap: 8px; font-size: 12px; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(255, 214, 222, 0.55); }
+  .scroll-cue span { width: 1px; height: 46px; background: linear-gradient(var(--rose), transparent); animation: drip 2s var(--ease) infinite; transform-origin: top; }
+  @keyframes drip { 0% { transform: scaleY(0); } 60% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+
+  /* Lines that write themselves. */
+  #note .note { max-width: 760px; text-align: center; display: grid; gap: 34px; }
+  .line { font-size: clamp(30px, 6vw, 58px); line-height: 1.12; }
+  .line .w { display: inline-block; opacity: 0; transform: translateY(0.4em); filter: blur(6px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease), filter 0.9s var(--ease); }
+  .line.in .w { opacity: 1; transform: none; filter: none; }
+  .line em { font-style: italic; color: var(--rose-2); }
+
+  /* The deck of reasons. */
+  #reasons .wrap { width: 100%; max-width: 980px; display: grid; gap: 40px; justify-items: center; text-align: center; }
+  .deck { position: relative; width: min(84vw, 360px); aspect-ratio: 3 / 4; }
+  .card {
+    position: absolute; inset: 0; border-radius: 22px; padding: 30px 26px; display: grid; align-content: space-between;
+    background: linear-gradient(160deg, #fff6f3, #ffe1e7); color: var(--ink);
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6), inset 0 1px 0 #fff;
+    transition: transform 0.75s var(--ease), opacity 0.6s var(--ease);
+    touch-action: pan-y; user-select: none; cursor: grab;
+  }
+  .card .n { font-family: var(--serif); font-style: italic; font-size: 20px; color: var(--rose); }
+  .card p { font-family: var(--serif); font-size: clamp(26px, 6.6vw, 32px); line-height: 1.15; letter-spacing: -0.015em; }
+  .card .foot { display: flex; justify-content: space-between; align-items: center; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #a35b6b; }
+  .card.gone { opacity: 0; pointer-events: none; }
+  .deck-hint { font-size: 13px; color: rgba(255, 214, 222, 0.6); letter-spacing: 0.08em; }
+  .deck-done { font-family: var(--hand); font-size: 34px; color: var(--blush); }
+
+  /* The polaroid. */
+  #photo .wrap { display: grid; gap: 34px; justify-items: center; text-align: center; perspective: 900px; }
+  .polaroid {
+    width: min(76vw, 360px); padding: 14px 14px 64px; background: #fbf7f2; border-radius: 4px; color: var(--ink);
+    box-shadow: 0 40px 80px -24px rgba(0, 0, 0, 0.7);
+    transform: rotate(-3deg); transition: transform 0.5s var(--ease); transform-style: preserve-3d; position: relative;
+  }
+  .polaroid img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 30%; filter: sepia(0.25) contrast(1.05) brightness(1.03); }
+  .polaroid .cap { position: absolute; left: 0; right: 0; bottom: 14px; font-family: var(--hand); font-size: 30px; color: #3a1a22; }
+  .tape { position: absolute; top: -14px; left: 50%; width: 110px; height: 30px; margin-left: -55px; background: rgba(255, 214, 222, 0.75); transform: rotate(2deg); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); }
+  .photo-line { font-size: clamp(30px, 6vw, 52px); max-width: 640px; line-height: 1.1; }
+
+  /* The question. */
+  #ask { text-align: center; }
+  #ask .wrap { display: grid; gap: 22px; justify-items: center; max-width: 860px; }
+  .ask-pre { font-family: var(--hand); font-size: clamp(32px, 6vw, 46px); color: var(--blush); }
+  .ask-q { font-size: clamp(46px, 10vw, 104px); line-height: 0.98; }
+  .ask-q em { font-style: italic; color: var(--rose-2); }
+  .ask-small { font-size: 15px; color: rgba(255, 214, 222, 0.7); }
+  .choices { position: relative; margin-top: 26px; height: 150px; width: min(92vw, 520px); display: flex; align-items: center; justify-content: center; gap: 18px; }
+  .yes {
+    position: relative; z-index: 2; padding: 18px 46px; border-radius: 999px; font-weight: 600; font-size: 20px; color: #fff;
+    background: linear-gradient(180deg, #ff6b86, #e8264c);
+    box-shadow: 0 14px 34px -8px rgba(255, 77, 109, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    transition: transform 0.45s var(--ease), box-shadow 0.3s;
+  }
+  .yes:hover { box-shadow: 0 18px 44px -8px rgba(255, 77, 109, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.4); }
+  .yes::after { content: ""; position: absolute; inset: -6px; border-radius: inherit; border: 1.5px solid var(--rose); opacity: 0; animation: ring 2.2s var(--ease) infinite; }
+  @keyframes ring { from { transform: scale(0.9); opacity: 0.9; } to { transform: scale(1.35); opacity: 0; } }
+  .no {
+    padding: 14px 30px; border-radius: 999px; font-size: 16px; color: var(--blush);
+    background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 214, 222, 0.25);
+    transition: transform 0.35s var(--ease), opacity 0.3s; white-space: nowrap;
+  }
+  .no.flee { position: fixed; z-index: 55; transition: left 0.35s var(--ease), top 0.35s var(--ease), transform 0.35s var(--ease); }
+
+  /* After yes. */
+  #yes { display: none; text-align: center; }
+  #yes.on { display: grid; }
+  #yes .wrap { display: grid; gap: 22px; justify-items: center; max-width: 900px; }
+  .official { font-size: clamp(56px, 13vw, 140px); line-height: 0.92; }
+  .official em { font-style: italic; color: var(--rose-2); }
+  .cert {
+    margin-top: 18px; width: min(90vw, 460px); padding: 28px 26px 26px; border-radius: 20px; position: relative;
+    background: linear-gradient(160deg, #fff7f4, #ffe3e9); color: var(--ink);
+    box-shadow: 0 40px 80px -24px rgba(0, 0, 0, 0.7), inset 0 1px 0 #fff;
+  }
+  .cert .top { font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: #a35b6b; }
+  .cert .names { margin-top: 10px; font-family: var(--serif); font-size: 34px; line-height: 1.05; }
+  .cert .names em { font-style: italic; color: var(--rose); }
+  .cert .since { margin-top: 12px; font-family: var(--hand); font-size: 28px; color: #3a1a22; }
+  .cert .stamp {
+    position: absolute; right: -12px; top: -16px; width: 82px; height: 82px; border-radius: 50%; display: grid; place-items: center;
+    background: radial-gradient(circle at 35% 30%, #ff7a92, #c9183b 70%); color: #fff; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1.2;
+    transform: rotate(12deg); box-shadow: 0 10px 24px rgba(201, 24, 59, 0.5);
+  }
+  .cert .mini { width: 92px; height: 92px; margin: 18px auto 0; }
+  .yes-note { font-family: var(--hand); font-size: clamp(28px, 5vw, 36px); color: var(--blush); max-width: 560px; }
+  .again { margin-top: 6px; font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255, 214, 222, 0.6); text-decoration: underline; text-underline-offset: 6px; }
+  #burst { position: fixed; inset: 0; z-index: 45; pointer-events: none; }
+
+  footer { position: relative; z-index: 1; padding: 40px 22px 60px; text-align: center; font-family: var(--hand); font-size: 26px; color: rgba(255, 214, 222, 0.7); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+  }
+</style>
+</head>
+<body class="locked">
+<!-- Change the names here. -->
+<script>
+  window.LOVE = {
+    her: "Dedepie",
+    from: "", // your name, e.g. "Mustakim". Leave empty to sign as "me".
+    reasons: [
+      "Your smile fixes days I didn't know were broken.",
+      "You make me laugh without even trying.",
+      "Talking to you is my favourite part of the day.",
+      "You're beautiful, and it's not only your face.",
+      "With you, I'm a better version of me.",
+      "I can't picture the future without you in it.",
+    ],
+  };
+</script>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Black and white to a warm rose duotone. -->
+    <filter id="rosy" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values="0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0 0 0 1 0" />
+      <feComponentTransfer>
+        <feFuncR type="table" tableValues="0.16 0.55 1" />
+        <feFuncG type="table" tableValues="0.03 0.22 0.92" />
+        <feFuncB type="table" tableValues="0.08 0.3 0.9" />
+      </feComponentTransfer>
+    </filter>
+    <clipPath id="heart" clipPathUnits="objectBoundingBox">
+      <path d="M0.5,0.93 C0.5,0.93 0.04,0.66 0.04,0.33 C0.04,0.15 0.18,0.04 0.33,0.04 C0.42,0.04 0.47,0.09 0.5,0.15 C0.53,0.09 0.58,0.04 0.67,0.04 C0.82,0.04 0.96,0.15 0.96,0.33 C0.96,0.66 0.5,0.93 0.5,0.93 Z" />
+    </clipPath>
+  </defs>
+</svg>
+
+<div class="glow"></div>
+<canvas id="sky"></canvas>
+<div class="grain"></div>
+
+<!-- 1. The envelope -->
+<div id="gate">
+  <div class="gate-inner">
+    <p class="gate-to">For <span data-her>Dedepie</span></p>
+    <button class="envelope" id="envelope" aria-label="Open the letter">
+      <span class="back"></span>
+      <span class="letter">open me ♥</span>
+      <span class="front"></span>
+      <span class="flap"></span>
+      <span class="seal"><svg viewBox="0 0 32 32"><path fill="#fff" d="M16 28S4 20.5 4 11.8A6.8 6.8 0 0 1 16 7.6a6.8 6.8 0 0 1 12 4.2C28 20.5 16 28 16 28z" /></svg></span>
+    </button>
+    <p class="gate-hint">Tap the seal</p>
+  </div>
+</div>
+
+<main>
+  <!-- 2. Her -->
+  <section id="hero">
+    <div class="hero-wrap">
+      <div class="heart-frame reveal" id="heartFrame">
+        <svg class="shape" viewBox="0 0 100 100" aria-hidden="true">
+          <g clip-path="url(#heart)">
+            <image class="heart-photo" id="heartImg" href="her-square.webp" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" />
+          </g>
+          <path class="heart-ring pulse" d="M50,93 C50,93 4,66 4,33 C4,15 18,4 33,4 C42,4 47,9 50,15 C53,9 58,4 67,4 C82,4 96,15 96,33 C96,66 50,93 50,93 Z" />
+          <path class="heart-ring" d="M50,93 C50,93 4,66 4,33 C4,15 18,4 33,4 C42,4 47,9 50,15 C53,9 58,4 67,4 C82,4 96,15 96,33 C96,66 50,93 50,93 Z" />
+        </svg>
+      </div>
+      <h1 class="hero-title serif reveal">Hey <em data-her>Dedepie</em>.</h1>
+      <p class="hero-sub reveal">I made you something. Scroll slowly.</p>
+      <div class="scroll-cue reveal" aria-hidden="true">Keep going<span></span></div>
+    </div>
+  </section>
+
+  <!-- 3. A few lines -->
+  <section id="note">
+    <div class="note">
+      <p class="line serif" data-words>Some people walk into your life</p>
+      <p class="line serif" data-words>and quietly make <em>everything</em> better.</p>
+      <p class="line serif" data-words>For me, that person is <em data-her>Dedepie</em>.</p>
+    </div>
+  </section>
+
+  <!-- 4. Reasons -->
+  <section id="reasons">
+    <div class="wrap">
+      <p class="label reveal">A few reasons</p>
+      <h2 class="serif reveal" style="font-size:clamp(40px,8vw,76px);line-height:1">Why it's <em style="color:var(--rose-2)">you</em>.</h2>
+      <div class="deck reveal" id="deck"></div>
+      <p class="deck-hint reveal" id="deckHint">Swipe or tap the card</p>
+    </div>
+  </section>
+
+  <!-- 5. The photo -->
+  <section id="photo">
+    <div class="wrap">
+      <div class="polaroid reveal" id="polaroid">
+        <span class="tape"></span>
+        <img src="her.webp" alt="Dedepie" loading="lazy" />
+        <p class="cap">my favourite view</p>
+      </div>
+      <p class="photo-line serif reveal">Every time I see this face, I smile like an idiot.</p>
+    </div>
+  </section>
+
+  <!-- 6. The question -->
+  <section id="ask">
+    <div class="wrap">
+      <p class="ask-pre reveal">So, <span data-her>Dedepie</span>...</p>
+      <h2 class="ask-q serif reveal">Will you be my <em>girlfriend</em>?</h2>
+      <p class="ask-small reveal">Officially. For real this time.</p>
+      <div class="choices reveal">
+        <button class="yes" id="yesBtn">Yes ♥</button>
+        <button class="no" id="noBtn">No</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. After yes -->
+  <section id="yes" aria-live="polite">
+    <div class="wrap">
+      <p class="label">Breaking news</p>
+      <h2 class="official serif">It's <em>official</em>.</h2>
+      <div class="cert">
+        <span class="stamp">Taken<br />♥</span>
+        <p class="top">Certificate of us</p>
+        <p class="names"><span data-her>Dedepie</span> <em>&amp;</em> <span data-from>me</span></p>
+        <svg class="mini" viewBox="0 0 100 100" aria-hidden="true">
+          <g clip-path="url(#heart)"><image class="heart-photo" href="her-square.webp" width="100" height="100" preserveAspectRatio="xMidYMid slice" /></g>
+        </svg>
+        <p class="since">since <span id="since"></span></p>
+      </div>
+      <p class="yes-note">You just made me the happiest person alive. Screenshot this and send it to me ♥</p>
+      <button class="again" id="again">Watch it again</button>
+    </div>
+  </section>
+</main>
+
+<footer>made with all my heart, for <span data-her>Dedepie</span></footer>
+<canvas id="burst"></canvas>
+
+<script>
+(() => {
+  const L = window.LOVE
+  const $ = (s, r = document) => r.querySelector(s)
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)]
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  // Names
+  $$('[data-her]').forEach((el) => (el.textContent = L.her))
+  $$('[data-from]').forEach((el) => (el.textContent = L.from || 'me'))
+  document.title = `For ${L.her} ♥`
+
+  // Split lines into words so they can arrive one by one.
+  $$('[data-words]').forEach((p) => {
+    const walk = (node) => {
+      ;[...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const frag = document.createDocumentFragment()
+          n.textContent.split(/(\s+)/).forEach((t) => {
+            if (!t.trim()) return frag.append(t)
+            const s = document.createElement('span')
+            s.className = 'w'
+            s.textContent = t
+            frag.append(s)
+          })
+          n.replaceWith(frag)
+        } else if (n.nodeType === 1 && !n.classList.contains('w')) {
+          if (n.children.length === 0 && n.textContent.trim()) n.classList.add('w')
+          else walk(n)
+        }
+      })
+    }
+    walk(p)
+    $$('.w', p).forEach((w, i) => (w.style.transitionDelay = `${i * 90}ms`))
+  })
+
+  // Reveal on scroll.
+  const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && (e.target.classList.add('in'), io.unobserve(e.target))), { threshold: 0.25 })
+  $$('.reveal, .line').forEach((el) => io.observe(el))
+
+  // ── Floating hearts ──
+  const sky = $('#sky')
+  const sx = sky.getContext('2d')
+  let W, H, dpr
+  const size = () => {
+    dpr = Math.min(2, devicePixelRatio || 1)
+    W = innerWidth; H = innerHeight
+    for (const c of [sky, burst]) { c.width = W * dpr; c.height = H * dpr; c.style.width = W + 'px'; c.style.height = H + 'px' }
+  }
+  const burst = $('#burst')
+  const bx = burst.getContext('2d')
+  size(); addEventListener('resize', size)
+  const heartPath = (ctx, x, y, s) => {
+    ctx.beginPath()
+    ctx.moveTo(x, y + s * 0.3)
+    ctx.bezierCurveTo(x, y, x - s * 0.5, y, x - s * 0.5, y + s * 0.3)
+    ctx.bezierCurveTo(x - s * 0.5, y + s * 0.6, x, y + s * 0.8, x, y + s)
+    ctx.bezierCurveTo(x, y + s * 0.8, x + s * 0.5, y + s * 0.6, x + s * 0.5, y + s * 0.3)
+    ctx.bezierCurveTo(x + s * 0.5, y, x, y, x, y + s * 0.3)
+    ctx.fill()
+  }
+  const floaters = Array.from({ length: reduce ? 0 : 26 }, () => ({ x: Math.random(), y: Math.random(), s: 6 + Math.random() * 16, v: 0.00012 + Math.random() * 0.00028, a: 0.08 + Math.random() * 0.22, ph: Math.random() * 6.28 }))
+  let pieces = []
+  let t0 = performance.now()
+  const loop = (t) => {
+    const dt = Math.min(48, t - t0); t0 = t
+    sx.setTransform(dpr, 0, 0, dpr, 0, 0); sx.clearRect(0, 0, W, H)
+    for (const f of floaters) {
+      f.y -= f.v * dt; if (f.y < -0.05) { f.y = 1.05; f.x = Math.random() }
+      sx.fillStyle = `rgba(255, 120, 145, ${f.a})`
+      heartPath(sx, f.x * W + Math.sin(t / 1400 + f.ph) * 18, f.y * H, f.s)
+    }
+    bx.setTransform(dpr, 0, 0, dpr, 0, 0); bx.clearRect(0, 0, W, H)
+    pieces = pieces.filter((p) => p.life > 0)
+    for (const p of pieces) {
+      p.vy += 0.00045 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.r += p.vr * dt; p.life -= dt
+      bx.save(); bx.globalAlpha = Math.min(1, p.life / 600); bx.translate(p.x, p.y); bx.rotate(p.r); bx.fillStyle = p.c
+      if (p.heart) heartPath(bx, 0, -p.s / 2, p.s); else bx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2)
+      bx.restore()
+    }
+    requestAnimationFrame(loop)
+  }
+  requestAnimationFrame(loop)
+  const colors = ['#ff4d6d', '#ff8fa3', '#ffd6de', '#ffffff', '#c9183b', '#ffb3c1']
+  const pop = (x, y, n = 140) => {
+    if (reduce) return
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, sp = 0.25 + Math.random() * 0.75
+      pieces.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 0.45, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.02, s: 8 + Math.random() * 14, c: colors[(Math.random() * colors.length) | 0], heart: Math.random() < 0.55, life: 2200 + Math.random() * 1600 })
+    }
+  }
+
+  // ── Open the envelope ──
+  const env = $('#envelope')
+  env.addEventListener('click', () => {
+    if (env.classList.contains('open')) return
+    env.classList.add('open')
+    chime([523, 659, 784])
+    const r = env.getBoundingClientRect()
+    setTimeout(() => pop(r.left + r.width / 2, r.top + r.height / 2, 60), 500)
+    setTimeout(() => {
+      $('#gate').classList.add('gone')
+      document.body.classList.remove('locked')
+      scrollTo(0, 0)
+    }, 1500)
+  })
+
+  // A soft music-box chime, made in the browser (no files).
+  let ac
+  function chime(notes, gap = 0.16) {
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)()
+      notes.forEach((f, i) => {
+        const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + i * gap
+        o.type = 'sine'; o.frequency.value = f
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.12, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.4)
+        o.connect(g).connect(ac.destination); o.start(t); o.stop(t + 1.5)
+      })
+    } catch (e) {}
+  }
+
+  // ── Heart grows and drifts with scroll ──
+  const frame = $('#heartFrame')
+  addEventListener('scroll', () => {
+    const y = scrollY / innerHeight
+    if (y < 1.2) frame.style.transform = `translateY(${y * 60}px) scale(${1 + y * 0.12})`
+  }, { passive: true })
+
+  // ── The deck of reasons ──
+  const deck = $('#deck')
+  const cards = L.reasons.map((text, i) => {
+    const c = document.createElement('div')
+    c.className = 'card'
+    c.innerHTML = `<span class="n">No. ${i + 1}</span><p>${text}</p><span class="foot"><span>${i + 1} / ${L.reasons.length}</span><span>♥</span></span>`
+    deck.append(c)
+    return c
+  })
+  let top = 0
+  const layout = () => cards.forEach((c, i) => {
+    const d = i - top
+    if (d < 0) return
+    c.style.zIndex = String(100 - d)
+    c.style.transform = `translateY(${Math.min(d, 3) * 12}px) scale(${1 - Math.min(d, 3) * 0.045}) rotate(${d === 0 ? 0 : (d % 2 ? 2.5 : -2.5)}deg)`
+  })
+  layout()
+  const next = (dir = 1) => {
+    if (top >= cards.length) return
+    const c = cards[top]
+    c.style.transform = `translateX(${dir * 130}%) rotate(${dir * 22}deg)`
+    c.classList.add('gone')
+    top++
+    layout()
+    if (top >= cards.length) {
+      $('#deckHint').outerHTML = '<p class="deck-done">and a hundred more I haven\'t written down.</p>'
+    }
+  }
+  // Swipe with a finger or the mouse; a tap also works.
+  let sx0 = null, dragging = null
+  deck.addEventListener('pointerdown', (e) => { if (top >= cards.length) return; sx0 = e.clientX; dragging = cards[top]; dragging.style.transition = 'none'; dragging.setPointerCapture(e.pointerId) })
+  deck.addEventListener('pointermove', (e) => { if (!dragging) return; const dx = e.clientX - sx0; dragging.style.transform = `translateX(${dx}px) rotate(${dx / 14}deg)` })
+  const release = (e) => {
+    if (!dragging) return
+    const dx = e.clientX - sx0
+    dragging.style.transition = ''
+    const card = dragging; dragging = null
+    if (Math.abs(dx) > 70 || Math.abs(dx) < 6) next(dx < 0 ? -1 : 1)
+    else { card.style.transform = ''; layout() }
+  }
+  deck.addEventListener('pointerup', release)
+  deck.addEventListener('pointercancel', release)
+
+  // ── Polaroid tilts toward the pointer ──
+  const pol = $('#polaroid')
+  addEventListener('pointermove', (e) => {
+    const r = pol.getBoundingClientRect()
+    if (r.bottom < 0 || r.top > innerHeight) return
+    const x = (e.clientX - (r.left + r.width / 2)) / innerWidth, y = (e.clientY - (r.top + r.height / 2)) / innerHeight
+    pol.style.transform = `rotate(-3deg) rotateY(${x * 18}deg) rotateX(${-y * 14}deg)`
+  }, { passive: true })
+
+  // ── The question ──
+  const yesBtn = $('#yesBtn'), noBtn = $('#noBtn')
+  const pleas = ['No', 'Are you sure?', 'Think again', 'Really??', 'Look at the Yes button', 'It\'s getting bigger...', 'Last chance', 'Just press Yes ♥']
+  let tries = 0
+  const dodge = () => {
+    tries++
+    noBtn.textContent = pleas[Math.min(tries, pleas.length - 1)]
+    yesBtn.style.transform = `scale(${Math.min(1 + tries * 0.18, 2.2)})`
+    const r = noBtn.getBoundingClientRect()
+    if (!noBtn.classList.contains('flee')) {
+      // Moved to the top layer of the page, so no section can sit over it.
+      noBtn.style.left = r.left + 'px'; noBtn.style.top = r.top + 'px'
+      noBtn.classList.add('flee')
+      document.body.append(noBtn)
+    }
+    const pad = 16
+    const x = pad + Math.random() * (innerWidth - r.width - pad * 2)
+    const y = innerHeight * 0.15 + Math.random() * (innerHeight * 0.7 - r.height)
+    requestAnimationFrame(() => { noBtn.style.left = x + 'px'; noBtn.style.top = y + 'px' })
+    if (tries >= pleas.length + 2) noBtn.style.transform = 'scale(0)'
+  }
+  noBtn.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && dodge())
+  noBtn.addEventListener('click', (e) => { e.preventDefault(); dodge() })
+
+  const fmt = (d) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+  const sayYes = (fresh) => {
+    let since = null
+    try { since = localStorage.getItem('dedepie-yes') } catch (e) {}
+    if (!since) { since = new Date().toISOString(); try { localStorage.setItem('dedepie-yes', since) } catch (e) {} }
+    $('#since').textContent = fmt(new Date(since))
+    noBtn.remove()
+    $('#ask').style.display = 'none'
+    const yes = $('#yes')
+    yes.classList.add('on')
+    yes.scrollIntoView({ behavior: fresh ? 'smooth' : 'auto' })
+    if (fresh) {
+      chime([523, 659, 784, 1047, 1319], 0.12)
+      const go = (k) => setTimeout(() => pop(innerWidth * (0.2 + Math.random() * 0.6), innerHeight * (0.25 + Math.random() * 0.35), 120), k)
+      go(150); go(650); go(1200); go(1900)
+    }
+  }
+  yesBtn.addEventListener('click', () => sayYes(true))
+  $('#again').addEventListener('click', () => { try { localStorage.removeItem('dedepie-yes') } catch (e) {} ; location.reload() })
+
+  // Already said yes on this phone? Go straight to the good part after the envelope.
+  try {
+    if (localStorage.getItem('dedepie-yes')) env.addEventListener('click', () => setTimeout(() => sayYes(false), 1600), { once: true })
+  } catch (e) {}
+})()
+</script>
+</body>
+</html>
